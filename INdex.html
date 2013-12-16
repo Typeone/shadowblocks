@@ -19,6 +19,8 @@
 
 		<script src="stats.min.js"></script>
 		<script src="tween.min.js"></script>
+		
+		<script src="microcache.js"></script>
 
 		<script>
 
@@ -45,33 +47,35 @@
 
 	 		camera = new THREE.PerspectiveCamera( 36, window.innerWidth / window.innerHeight, 1, 10000 );
 		 	camera.position.x = 0;
-			camera.position.y = 2000;
+			camera.position.y = 650;
 			camera.position.z = 0; 
 
 				scene = new THREE.Scene();
-
-
-				var geometry = new THREE.CubeGeometry( 100, 100, 100 );
-				var material = new THREE.MeshLambertMaterial( { color: 0x7FFF00} )
 				
-				for ( var i = 0; i < 450; i ++ ) {
 				
-				row = i / 15;
+				var geometry = new THREE.CubeGeometry( 50, 50, 50 );
+				var material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF} )
+				
+								
+				for ( var i = 0; i < 144; i ++ ) {
+				
+				row = i / 9;
 
 				rowY = Math.floor(row);
 
 					var object = new THREE.Mesh( geometry, material );
-					object.position.x = (i%15)*100-700
-					object.position.y = -100;
-					object.position.z = (rowY * 100) - 1200;
+					object.position.x = (i%9)*50- 200
+					object.position.y = -50;
+					object.position.z = (rowY * 50) - 400;
 					object.scale.x = 1;
-					object.scale.y = Math.random(15); /* add weighting so centre of image is flat and edges are more and more randomised */
+					object.scale.y = Math.random()*5; /* add weighting so centre of image is flat and edges are more and more randomised */
 					object.scale.z = 1;
 					scene.add( object );
 
 				}
-
-				projector = new THREE.Projector();
+				
+				
+				//projector = new THREE.Projector();
 
 				renderer = new THREE.CanvasRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
@@ -91,6 +95,20 @@
 
 			}
 
+				object.castShadow = true;
+				object.receiveShadow = true;
+				
+				//add subtle blue ambient lighting
+    		var ambientLight = new THREE.AmbientLight(0xe5e5e5);
+    		scene.add(ambientLight);
+      
+      		// directional lighting
+      		var directionalLight = new THREE.DirectionalLight(0xffffff);
+      		directionalLight.position.set(1, 1, 1).normalize();
+     		 scene.add(directionalLight); 
+				
+				camera.lookAt( scene.position );
+
 			function onWindowResize() {
 
 				camera.aspect = window.innerWidth / window.innerHeight;
@@ -104,48 +122,10 @@
 
 				event.preventDefault();
 
-				var vector = new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
-				projector.unprojectVector( vector, camera );
 
-				var raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
-
-				var intersects = raycaster.intersectObjects( scene.children );
-
-			/*	if ( intersects.length > 0 ) {
-
-					new TWEEN.Tween( intersects[ 0 ].object.position ).to( {
-						x: Math.random() * 800 - 400,
-						y: Math.random() * 800 - 400,
-						z: Math.random() * 800 - 400 }, 10 )
-					.easing( TWEEN.Easing.Elastic.Out).start();
-
-					new TWEEN.Tween( intersects[ 0 ].object.rotation ).to( {
-						x: Math.random() * 2 * Math.PI,
-						y: Math.random() * 2 * Math.PI,
-						z: Math.random() * 2 * Math.PI }, 2000 )
-					.easing( TWEEN.Easing.Elastic.Out).start();
-
-				} 
-
-				/*
-				// Parse all the faces
-				for ( var i in intersects ) {
-
-					intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
-
-				}
-				*/
 			}
 
-			//
-		//add subtle blue ambient lighting
-    		var ambientLight = new THREE.AmbientLight(0xe5e5e5);
-    		scene.add(ambientLight);
-      
-      		// directional lighting
-      		var directionalLight = new THREE.DirectionalLight(0xffffff);
-      		directionalLight.position.set(1, 1, 1).normalize();
-     		 scene.add(directionalLight); 
+		
 			
 	
 			function animate() {
@@ -157,18 +137,11 @@
 
 			}
 
-			var radius = 600;
-			var theta = 0;
+			
 
 			function render() {
 
-/*				TWEEN.update(); 
-
-				theta += 0.1;
-
-				camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
-				camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
-				camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) ); */
+			
 				camera.lookAt( scene.position );
 
 				renderer.render( scene, camera );
